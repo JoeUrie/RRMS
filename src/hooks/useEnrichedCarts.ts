@@ -18,13 +18,13 @@ export function useEnrichedCarts() {
         cartsQuery.isLoading || usersQuery.isLoading || productsQuery.isLoading
     const error = cartsQuery.error || usersQuery.error || productsQuery.error
 
-    let enrichedCarts: EnrichedCart[] = []
+    let data: EnrichedCart[] = []
 
     if (cartsQuery.data && usersQuery.data && productsQuery.data) {
         const userMap = new Map(usersQuery.data.map((u) => [toId(u.id), u]))
         const productMap = new Map(productsQuery.data.map((p) => [toId(p.id), p]))
 
-        enrichedCarts = cartsQuery.data.map((cart) => {
+        data = cartsQuery.data.map((cart) => {
             const userId = toId(cart.userId)
             const user = userId ? userMap.get(userId) ?? null : null
 
@@ -43,5 +43,5 @@ export function useEnrichedCarts() {
         })
     }
 
-    return { data: enrichedCarts, isLoading, error }
+    return { data, isLoading, error }
 }

@@ -1,13 +1,6 @@
-export interface User {
-    id: string
-    firstname: string
-    lastname: string
-    email: string
-    username: string
-    address: string
-    city: string
-    state: string
-    zipcode: string
-    country: string
-    phone: string
+import { apiGet } from "../api/client"
+import type { User } from '../types/user'
+
+export function getUsers(): Promise<User[]> {
+  return apiGet<User[]>('/users')
 }

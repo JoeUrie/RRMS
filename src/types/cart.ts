@@ -1,3 +1,6 @@
+import type { Product } from "./products"
+import type { User } from "./user"
+
 export interface CartItem {
     productId: string
     quantity: number

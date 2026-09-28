@@ -9,7 +9,7 @@ function ProductCard({ product, onSelect }: ProductCardProps) {
   return (
     <button
       onClick={() => onSelect(product)}
-      className="w-full rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm active:bg-gray-50"
+      className="w-full rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm outline-none active:bg-gray-50 focus-visible:ring-2 focus-visible:ring-blue-500"
     >
       <p className="font-medium text-gray-900">{product.name}</p>
       <div className="mt-2 flex justify-between text-sm text-gray-600">

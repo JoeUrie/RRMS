@@ -18,7 +18,6 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
                         <DialogTitle className="text-lg font-semibold text-gray-900">{title}</DialogTitle>
                         <button
                         onClick={onClose}
-                        aria-label="Close"
                         className="text-gray-400 hover:text-gray-600"
                         >
                             ✕

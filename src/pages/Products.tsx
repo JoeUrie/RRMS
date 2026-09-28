@@ -5,6 +5,9 @@ import ProductCard from '../components/products/ProductCard'
 import ProductDetailModal from '../components/products/ProductDetailModal'
 import AddProductForm from '../components/products/AddProductForm'
 import Toast from '../components/ui/Toast'
+import Spinner from '../components/ui/Spinner'
+import ErrorState from '../components/ui/ErrorState'
+import EmptyState from '../components/ui/EmptyState'
 import type { Product } from '../types/products'
 
 function Products() {
@@ -29,20 +32,31 @@ function Products() {
         <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">Products</h2>
             <button
-            onClick={() => setIsAddOpen(true)}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                onClick={() => setIsAddOpen(true)}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white outline-none hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-800 focus-visible:ring-offset-2"
             >
-            Add Product
+                Add Product
             </button>
         </div>
 
-        <ProductTable products={products ?? []} onSelect={setSelectedProduct} />
+        {isLoading && <Spinner label="Loading products..." />}
 
-        <div className="space-y-3 md:hidden">
-            {(products ?? []).map((product) => (
-            <ProductCard key={product.id} product={product} onSelect={setSelectedProduct} />
-            ))}
-        </div>
+        {error && !isLoading && <ErrorState message={String(error)} />}
+
+        {!isLoading && !error && products && products.length === 0 && (
+            <EmptyState message="No products found." />
+        )}
+
+        {!isLoading && !error && products && products.length > 0 && (
+            <>
+                <ProductTable products={products} onSelect={setSelectedProduct} />
+                <div className="space-y-3 md:hidden">
+                    {products.map((product) => (
+                    <ProductCard key={product.id} product={product} onSelect={setSelectedProduct} />
+                    ))}
+                </div>
+            </>
+        )}
 
         <ProductDetailModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
 

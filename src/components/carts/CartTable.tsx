@@ -1,3 +1,4 @@
+import type { KeyboardEvent } from 'react'
 import type { EnrichedCart } from '../../types/cart'
 
 interface CartTableProps {
@@ -28,6 +29,15 @@ function statusBadgeClass(status: string): string {
   }
 }
 
+function handleRowKeyDown(event: KeyboardEvent<HTMLTableRowElement>, onActivate: () => void) {
+  // <tr> is not natively keyboard-operable, so Enter/Space must be wired
+  // up manually to match the behavior a native <button> gets for free.
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    onActivate()
+  }
+}
+
 function CartTable({ carts, onSelect }: CartTableProps) {
   return (
     <table className="hidden w-full border-collapse text-left md:table">
@@ -40,26 +50,32 @@ function CartTable({ carts, onSelect }: CartTableProps) {
         </tr>
       </thead>
       <tbody>
-        {carts.map((cart) => (
-          <tr
-            key={cart.id}
-            onClick={() => onSelect(cart)}
-            className="cursor-pointer border-b border-gray-100 hover:bg-gray-50"
-          >
-            <td className="py-3 pr-4 font-medium text-gray-900">
-              {cart.user ? `${cart.user.firstname} ${cart.user.lastname}` : 'Guest'}
-            </td>
-            <td className="py-3 pr-4 text-gray-700">{formatDate(cart.date)}</td>
-            <td className="py-3 pr-4">
-              <span
-                className={`rounded-full px-2 py-1 text-xs font-medium ${statusBadgeClass(cart.status)}`}
-              >
-                {cart.status}
-              </span>
-            </td>
-            <td className="py-3 pr-4 text-gray-700">{cart.itemCount}</td>
-          </tr>
-        ))}
+        {carts.map((cart) => {
+          const customerName = cart.user ? `${cart.user.firstname} ${cart.user.lastname}` : 'Guest'
+          return (
+            <tr
+              key={cart.id}
+              tabIndex={0}
+              role="button"
+              onClick={() => onSelect(cart)}
+              onKeyDown={(e: KeyboardEvent<HTMLTableRowElement>) =>
+                handleRowKeyDown(e, () => onSelect(cart))
+              }
+              className="cursor-pointer border-b border-gray-100 hover:bg-gray-50 focus:outline-none focus-visible:bg-blue-50 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+            >
+              <td className="py-3 pr-4 font-medium text-gray-900">{customerName}</td>
+              <td className="py-3 pr-4 text-gray-700">{formatDate(cart.date)}</td>
+              <td className="py-3 pr-4">
+                <span
+                  className={`rounded-full px-2 py-1 text-xs font-medium ${statusBadgeClass(cart.status)}`}
+                >
+                  {cart.status}
+                </span>
+              </td>
+              <td className="py-3 pr-4 text-gray-700">{cart.itemCount}</td>
+            </tr>
+          )
+        })}
       </tbody>
     </table>
   )

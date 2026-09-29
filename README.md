@@ -1,32 +1,63 @@
-# React + TypeScript + Vite
+# RRMS Product & Cart Viewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A React + TypeScript application built for the RRMS SE Engineer Development Task. Consumes
+the [JSONing mock API](https://jsoning.com/api/) to browse products and carts.
 
-Currently, two official plugins are available:
+**Live demo:** (https://rrms-one.vercel.app/)
+**Design decisions write-up:** see `RRMS-Project-Scope-and-Design-Decisions.md` in this repo for the full rationale behind every technology and architecture choice made in this project.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- React 19 + TypeScript, scaffolded with Vite
+- Tailwind CSS v4
+- React Router (data router API) for `/`, `/products`, `/carts`
+- TanStack Query for data fetching/caching
+- React Hook Form + Zod for the Add Product form validation
+- Headless UI for accessible modals
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+cp .env.example .env   # then edit VITE_API_BASE_URL if needed
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The app expects an environment variable:
+
+```
+VITE_API_BASE_URL=https://api.jsoning.com/mock/public
+```
+
+Point this at your locally running instance of the API (e.g. `http://localhost:3000`) if
+you'd prefer to develop against a local copy instead of the public mock endpoint.
+
+## Build & Preview Production Locally
+
+```bash
+npm run build
+npm run preview
+```
+
+## Deployment
+
+This project is deployed on Vercel. `vercel.json` contains a rewrite rule required for
+client-side routing (React Router) to work correctly on direct links and page refreshes —
+without it, routes like `/products` and `/carts` would 404 on a static host.
+
+Environment variables are configured directly in the Vercel dashboard
+(Project → Settings → Environment Variables) rather than committed to the repo.
+
+## Notable Design Decisions (short version)
+
+- **Client-side data joining for carts**: the API does not support relation-embedding, so
+  carts (`userId`, `items[].productId`) are joined against `/users` and `/products` in
+  `useEnrichedCarts.ts`, with IDs normalized to strings to handle a string/number ID
+  mismatch observed in the live API.
+- **Graceful degradation**: carts with a missing or `null` `userId` render a "Guest /
+  user data unavailable" state instead of crashing.
+- **No backend persistence for Add Product**: per the task spec, the form demonstrates
+  client-side validation only; no POST request is made on submit.
+
+Full rationale for every decision — including why each library was chosen — is in
+`RRMS-Project-Scope-and-Design-Decisions.md`.

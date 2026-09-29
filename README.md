@@ -8,7 +8,7 @@ the [JSONing mock API](https://jsoning.com/api/) to browse products and carts.
 
 ## Tech Stack
 
-- React 19 + TypeScript, scaffolded with Vite
+- React 20 + TypeScript, scaffolded with Vite
 - Tailwind CSS v4
 - React Router (data router API) for `/`, `/products`, `/carts`
 - TanStack Query for data fetching/caching
